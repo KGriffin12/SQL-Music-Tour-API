@@ -1,3 +1,2 @@
 node_modules
 .env
-PG_URI=postgres://your_username:your_postgres_pass@localhost:5432/dbname
