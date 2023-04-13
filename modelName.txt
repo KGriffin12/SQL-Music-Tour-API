@@ -1,0 +1,83 @@
+! CREATES AN ENTRY
+modelName.create() {
+
+// IN SEQUELIZE
+await Post.create({
+    title: 'My First Blog Post',
+    content: 'This is some text'
+})
+
+// IN SQL
+INSERT INTO posts (title, content)
+VALUES ('My First Blog Post', 'This is some text');
+}
+
+! READ/FIND ENTRIES
+modelName.findAll() {
+
+// IN SEQUELIZE
+await Post.findAll({ 
+    where: { title: 'Tabs vs. Spaces' }
+})
+
+// IN SQL
+SELECT * FROM posts WHERE title = 'Tabs vs. Spaces';
+}
+
+! UPDATE AN ENTRY
+modelName.update() {
+
+// IN SEQUELIZE
+await Post.update(
+    { title: 'Beware of Typos' },
+    { where: { title: 'Beware of Typs' } }
+)
+
+// IN SQL
+UPDATE posts
+SET title - 'Beware of Typos'
+WHERE title = 'Beware of Typs';
+}
+
+! DELETE AN ENTRY
+modelName.destroy() {
+
+// IN SEQUELIZE 
+await Post.destroy({
+    where: { title: 'The History of Foobar' }
+})
+
+// IN SQL
+DELETE FROM posts
+WHERE title = 'The History of Foobar';
+}
+
+---------------------------
+
+ALIASING ATTRIBUTES {
+    // IN SEQUELIZE 
+await Book.findAll({
+    attributes: [ 'title', ['cost', 'price'] ]
+})
+
+    // IN SQL
+SELECT title, cost AS price FROM books;
+}
+
+ORDERING DATA {
+    // IN SEQUELIZE 
+
+    // IN SQL
+}
+
+GROUPING DATA {
+    // IN SEQUELIZE
+
+    // IN SQL
+}
+
+FILTERING DATA {
+    // IN SEQUELIZE
+
+    // IN SQL
+}
