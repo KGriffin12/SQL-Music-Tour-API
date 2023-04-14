@@ -1,101 +1,85 @@
 // DEPENDENCIES
-const stages = require('express').Router();
-const db = require('../models');
-const { Stage } = db;
-const { Op } = require('sequelize');
+const stages = require('express').Router()
+const db = require('../models')
+const { Stage, Event, StageEvent } = db 
+const { Op } = require('sequelize')
 
-// INDEX (GET findAll)
+// FIND ALL STAGES
 stages.get('/', async (req, res) => {
-  try {
-    // this finds all stages
-    const foundStages = await Stage.findAll({
-      order: [['stage_id', 'ASC']],
-      where: {
-        name: {
-          [Op.like]: `%${req.query.name ? req.query.name : ''}%`,
-        },
-      },
-      limit: 10,
-    });
-    res.status(200).json(foundStages);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Sever Error',
-    });
-  }
-});
+    try {
+        const foundStages = await Stage.findAll({
+            where: {
+                stage_name: { [Op.like]: `%${req.query.stage_name ? req.query.stage_name : ''}%` }
+            }
+        })
+        res.status(200).json(foundStages)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
 
-// SHOW (GET findOne)
-stages.get('/:id', async (req, res) => {
-  try {
-    // this finds a stage by it's ID
-    const foundStage = await Stage.findOne();
-    res.status(200).json(foundStage);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Sever Error',
-    });
-  }
-});
+// FIND A SPECIFIC STAGE
+stages.get('/:name', async (req, res) => {
+    try {
+        const foundStage = await Stage.findOne({
+            where: { stage_name: req.params.name },
+            include: {
+                model: Event,
+                as: 'events',
+                through: { attributes: [] }
+            }
+        })
+        res.status(200).json(foundStage)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+})
 
-// CREATE (POST)
+// CREATE A STAGE
 stages.post('/', async (req, res) => {
-  try {
-    // this creates a new stage
-    const newStage = await Stage.create(req.body);
-    res.status(201).json({
-      message: 'Stage created',
-      data: newStage,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Sever Error',
-    });
-  }
-});
+    try {
+        const newStage = await Stage.create(req.body)
+        res.status(200).json({
+            message: 'Successfully inserted a new stage',
+            data: newStage
+        })
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
 
-// UPDATE (PUT)
+// UPDATE A STAGE
 stages.put('/:id', async (req, res) => {
-  try {
-    // this updates a stage
-    const updatedStage = await Stage.update(req.body, {
-      where: {
-        stage_id: req.params.id,
-      },
-    });
-    res.status(202).json({
-      message: `Successfully updated ${updatedStage} stage(s)`,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Sever Error',
-    });
-  }
-});
+    try {
+        const updatedStages = await Stage.update(req.body, {
+            where: {
+                stage_id: req.params.id
+            }
+        })
+        res.status(200).json({
+            message: `Successfully updated ${updatedStages} stage(s)`
+        })
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
 
-// DELETE (DELETE)
+// DELETE A STAGE
 stages.delete('/:id', async (req, res) => {
-  try {
-    // this deletes a stage
-    const deletedStage = await Stage.destroy({
-      where: {
-        stage_id: req.params.id,
-      },
-    });
-    res.status(200).json({
-      message: `${deletedStage} stage(s) deleted`,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Sever Error',
-    });
-  }
-});
+    try {
+        const deletedStages = await Stage.destroy({
+            where: {
+                stage_id: req.params.id
+            }
+        })
+        res.status(200).json({
+            message: `Successfully deleted ${deletedStages} stage(s)`
+        })
+    } catch(err) {
+        res.status(500).json(err)
+    }
+})
 
 // EXPORT
-module.exports = stages;
+module.exports = stages

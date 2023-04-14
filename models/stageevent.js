@@ -11,16 +11,25 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  StageEvent.init(
-    {
-      stage_events_id: DataTypes.INTEGER,
-      stage_id: DataTypes.SMALLINT,
-      event_id: DataTypes.SMALLINT,
+  StageEvent.init({
+    stage_events_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
-    {
-      sequelize,
-      modelName: 'StageEvent',
+    stage_id: {
+      type: DataTypes.SMALLINT,
+      allowNull: false
+    },
+    event_id: {
+      type: DataTypes.SMALLINT,
+      allowNull: false
     }
-  );
-  return StageEvent;
-};
+  }, {
+    sequelize,
+    modelName: 'StageEvent',
+    tableName: 'stage_event',
+    timestamps: false,
+  })
+  return StageEvent
+}

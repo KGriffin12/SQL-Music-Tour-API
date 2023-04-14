@@ -27,22 +27,46 @@ event.get('/', async (req, res) => {
 });
 
 // SHOW (GET findOne)
-event.get('/:id', async (req, res) => {
+event.get('/:name', async (req, res) => {
   try {
-    // this finds an event by it's ID
     const foundEvent = await Event.findOne({
-      where: {
-        event_id: req.params.id,
+      where: { name: req.params.name },
+      include: [
+      {
+      model: MeetGreet,
+      as: 'meet_greets',
+      include: {
+      model: Band,
+      as: 'band'
+        }
       },
-    });
-    res.status(200).json(foundEvent);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Sever Error',
-    });
+    {
+      model: SetTime,
+      as: 'set_times',
+      include: [
+    {
+      model: Band,
+      as: 'band'
+    },
+  {
+    model: Stage,
+    as: 'stage'
+        }
+      ]
+    },
+  {
+    model: Stage,
+    as: 'stages',
+    through:  { attributes: [] }
   }
-});
+]
+})
+    res.status(200).json(foundEvent)
+  } catch (error) {
+      console.log(error)
+      res.status(500).json(error)
+  }
+})
 
 // CREATE (POST)
 event.post('/', async (req, res) => {
